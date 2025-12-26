@@ -27,13 +27,18 @@ fn main() -> io::Result<()>{
         // Create a vector of ints from the bank.
         let nums: Vec<i32> = bank.chars()
             .map(|c| c.to_string().parse::<i32>().unwrap()).collect();
+
+        let mut cells: Vec<i32> = Vec::new();
+        let mut last_idx = 0;
+
+        for i in (0..12).rev() {
+            // println!("i:{}, last_idx:{}", i, last_idx);
+            let (idx, val) = find_first_largest_instance(&nums[last_idx..nums.len()-i]).expect("whatever");
+            last_idx = idx + 1 + last_idx;
+            cells.push(val);
+        }
         
-        let (first_idx, first_val) = find_first_largest_instance(&nums[..nums.len()-1]).expect("whatever");
-        let (_, second_val) = find_first_largest_instance(&nums[first_idx+1..]).expect("whatever");
-
-        let bank_joltage_str = first_val.to_string() + &second_val.to_string();
-        println!("Bank: {} ", bank_joltage_str);
-
+        let bank_joltage_str: String = cells.iter().map(|num| num.to_string()).collect();
         total_joltage += bank_joltage_str.parse::<u128>().expect("oh well");
     }
 
